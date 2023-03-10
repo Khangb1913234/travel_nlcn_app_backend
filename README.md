@@ -8,5 +8,5 @@ App helps users to search for tourist attractions and tours in Can Tho, collabor
   + Search, create, update, delete approvals
   + Create review
   + Save favorite tourist attractions
-  + Book tour
+  + Book tour (In testing phase)
 - Technology in use: NodeJS/Express, MongoDB, JavaScript

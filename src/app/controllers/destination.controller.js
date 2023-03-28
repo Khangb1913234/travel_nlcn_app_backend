@@ -203,7 +203,7 @@ exports.create = function(req, res, next){
                                     }
                                 }
                                 //res.redirect(`/me/stored/destinations/${account.username}`)
-                                res.json({msg: "Successfully"})
+                                res.json({msg: "Successfully", destination: destination})
                             })
                             .catch(next)
                     }

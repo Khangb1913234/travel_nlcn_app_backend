@@ -479,7 +479,7 @@ exports.findOne = function(req, res, next){
                     for(i = 0; i < approvals.length; i++)
                         if(approvals[i].destinationId)
                             a[j++] = approvals[i].destinationId
-                    Destination.find({$or: [{types: {$in: destinations.types}}, {wardCode: destinations.wardCode}], _id: {$ne: destinations._id, $in: a}})
+                    Destination.find({$or: [{types: {$in: destinations.types}}], _id: {$ne: destinations._id, $in: a}})
                         .skip(0)
                         .limit(3)
                         .then(function(destinationSimilar){

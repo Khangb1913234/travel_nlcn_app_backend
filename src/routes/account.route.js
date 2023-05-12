@@ -8,6 +8,7 @@ module.exports = function(app){
     router.put("/update/:id", accounts.update)   
     router.delete("/delete/:id", accounts.delete)
     router.post("/action", accounts.action)
-    router.get("/detail", accounts.detail)
+    router.get("/detail", accounts.detail)  
+    router.get("/statistic", accounts.statisticNewMember)
     app.use("/account", router)
 };

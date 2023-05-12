@@ -2,6 +2,7 @@ const mongoose = require("mongoose")
 const Account = require("../models/account.model")
 const bcrypt = require("bcryptjs")
 const jwt = require("jsonwebtoken")
+const { parse, compareAsc} = require('date-fns')
 
 exports.register = function(req, res, next){ 
     const account = new Account(
@@ -154,4 +155,80 @@ exports.detail = function(req, res, next){
         else{
             res.json({msg: "Fail"})
         }
+}
+
+exports.statisticNewMember = function(req, res, next){
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+    const date7DaysAgo = new Date(today.getTime() - 6 * 24 * 60 * 60 * 1000)
+    date7DaysAgo.setHours(0, 0, 0, 0)
+    var token = req.header("Authorization")
+
+    if(token){
+        token = token.substr(7)
+        var decode = jwt.verify(token, "krystal")
+        Account.findById(decode.id)
+            .then(function(account){
+                if(account.role == "qtv"){
+                    Account.aggregate([
+                        {
+                          $match: {
+                            createdAt: {
+                              $gte: date7DaysAgo,
+                              $lte: new Date(today.getTime() + 24 * 60 * 60 * 1000),
+                            },
+                            role: "tv"
+                          },
+                        },
+                        {
+                          $group: {
+                            _id: {
+                              $dateToString: {
+                                format: '%d-%m-%Y',
+                                date: '$createdAt',
+                              },
+                            },
+                            total: { $sum: 1 },
+                          },
+                        },
+                        {
+                            $sort: {
+                              _id: 1
+                            }
+                        }
+                    ])
+                    .then(function(result){
+                        for(var i = 0; i < 7; i++){
+                            date = new Date(today.getTime() - i * 24 * 60 * 60 * 1000)
+                            const day = date.getDate().toString().padStart(2, '0')
+                            const month = (date.getMonth() + 1).toString().padStart(2, '0')
+                            const year = date.getFullYear();
+                            const formattedDate = `${day}-${month}-${year}`
+                            const exists = result.some(item => item._id === formattedDate);
+                            if(!exists){
+                                var obj = {
+                                    _id: formattedDate,
+                                    total: 0
+                                }
+                                result.unshift(obj)
+                            }
+                            
+                        }
+                        console.log(result)
+                        res.json({result})
+                    })
+                    .catch(next)
+                    
+                        
+                }
+                else{
+                    res.json({msg: "Fail"})
+                }
+            })
+            .catch(next)
+    }
+    else{
+        res.json({msg: "Fail"})
+    }
+    
 }

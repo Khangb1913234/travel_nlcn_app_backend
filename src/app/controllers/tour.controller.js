@@ -331,7 +331,7 @@ exports.findOne = function(req, res, next){
                             a[j++] = approvals[i].tourId
                     Tour.find({$or: [{destinations: {$in: tour.destinations}}], _id: {$ne: tour._id, $in: a}})
                         .skip(0)
-                        .limit(5)
+                        .limit(3)
                         .then(function(tourSimilar){
                             tourSimilar = tourSimilar.map(function(tourSimilar){
                                 return tourSimilar.toObject()
@@ -489,6 +489,10 @@ exports.edit = function(req, res, next){
 exports.update = function(req, res, next){
 	const id = req.params.id
     var title, content, price, time, contact, image
+    if(req.body.destinations)
+        req.body.destinations = req.body.destinations.split(",")
+    else
+        req.body.destinations = []
     if(req.body.title)
         title = req.body.title
     if(req.body.content)
@@ -515,6 +519,7 @@ exports.update = function(req, res, next){
     }
     var token = req.header("Authorization")
     if(token){
+        console.log(req.body.destinations)
         token = token.substr(7)
         var decode = jwt.verify(token, "krystal")
         Account.findById(decode.id)

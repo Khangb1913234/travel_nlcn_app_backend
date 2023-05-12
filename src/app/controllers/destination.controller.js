@@ -103,8 +103,12 @@ exports.create = function(req, res, next){
     var i = 0
     if(req.body.types)
         req.body.types = req.body.types.split(",")
+    else
+        req.body.types = []
     if(req.body.services)
         req.body.services = req.body.services.split(",")
+    else
+        req.body.services = []
     if(token){
         token = token.substr(7)
         var decode = jwt.verify(token, "krystal")
@@ -852,7 +856,7 @@ exports.edit = function(req, res, next){
 
 exports.update = function(req, res, next){
 	const id = req.params.id
-    var name, content, address, time, price, capacity, contact, map, image
+    var name, content, address, time, price, capacity, contact, map, image, districtId, wardCode
     if(req.body.name)
         name = req.body.name
     if(req.body.content)
@@ -881,14 +885,24 @@ exports.update = function(req, res, next){
         image = path
         console.log(path)
     }
-    var districtId = req.body.districtId
-    var wardCode = req.body.wardCode
+    if(req.body.districtId)
+        districtId = req.body.districtId
+    else
+        districtId = null
+    if(req.body.wardCode)
+        wardCode = req.body.wardCode
+    else
+        wardCode = null
     var i = 0
     var token = req.header("Authorization")
     if(req.body.types)
         req.body.types = req.body.types.split(",")
+    else
+        req.body.types = []
     if(req.body.services)
         req.body.services = req.body.services.split(",")
+    else    
+        req.body.services = []
     if(token){
         token = token.substr(7)
         var decode = jwt.verify(token, "krystal")
